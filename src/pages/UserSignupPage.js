@@ -130,11 +130,7 @@ class UserSignupPage extends React.Component {
   }
 }
 
-const UserSignUpPageWithTranslation = withTranslation()(UserSignupPage);
+const UserSignUpPageWithApiProgress = withApiProgress(UserSignupPage,"/api/1.0/users");
+const UserSignUpPageWithTranslation = withTranslation()(UserSignUpPageWithApiProgress);
 
-const UserSignUpPageWithApiProgress = withApiProgress(
-  UserSignUpPageWithTranslation,
-  "/api/1.0/users"
-);
-
-export default UserSignUpPageWithApiProgress;
+export default UserSignUpPageWithTranslation;

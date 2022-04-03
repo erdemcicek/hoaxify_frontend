@@ -1,20 +1,26 @@
 import React, { Component } from "react";
 import axios from "axios";
 
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || "Component";
+}
+
 export function withApiProgress(WrappedComponent, apiPath) {
   return class extends Component {
+    static displayName =
+      "ApiProgress(" + getDisplayName(WrappedComponent) + ")";
     state = {
       pendingApiCall: false,
     };
 
     componentDidMount() {
-      axios.interceptors.request.use((request) => {
+      this.reqestInterceptor = axios.interceptors.request.use((request) => {
         //this.setState({ pendingApiCall: true });
         this.updateApiCallFor(request.url, true);
         return request;
       });
 
-      axios.interceptors.response.use(
+      this.responseInterceptor = axios.interceptors.response.use(
         (response) => {
           //this.setState({ pendingApiCall: false });
           this.updateApiCallFor(response.config.url, false);
@@ -26,6 +32,11 @@ export function withApiProgress(WrappedComponent, apiPath) {
           throw error;
         }
       );
+    }
+
+    componentWillUnmount(){
+      axios.interceptors.request.eject(this.reqestInterceptor);
+      axios.interceptors.response.eject(this.responseInterceptor);
     }
 
     updateApiCallFor = (url, inProgress) => {
@@ -43,7 +54,9 @@ export function withApiProgress(WrappedComponent, apiPath) {
       //       })}
       //     </div>
       //   );
-      return <WrappedComponent pendingApiCall={pendingApiCall} />;
+      return (
+        <WrappedComponent pendingApiCall={pendingApiCall} {...this.props} />
+      );
     }
   };
 }

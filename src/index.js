@@ -1,17 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import './bootstrap-override.scss'
-import reportWebVitals from './reportWebVitals';
-import './i18n';
-import App from "./container/App"
-
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import "./bootstrap-override.scss";
+import reportWebVitals from "./reportWebVitals";
+import "./i18n";
+import App from "./container/App";
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
