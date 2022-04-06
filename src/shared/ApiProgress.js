@@ -34,7 +34,7 @@ export function withApiProgress(WrappedComponent, apiPath) {
       );
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
       axios.interceptors.request.eject(this.reqestInterceptor);
       axios.interceptors.response.eject(this.responseInterceptor);
     }
@@ -46,16 +46,10 @@ export function withApiProgress(WrappedComponent, apiPath) {
     };
 
     render() {
-      const { pendingApiCall } = this.state;
-      //   return (
-      //     <div>
-      //       {React.cloneElement(this.props.children, {
-      //         pendingApiCall,
-      //       })}
-      //     </div>
-      //   );
+      const pendingApiCall =
+        this.state.pendingApiCall || this.props.pendingApiCall;
       return (
-        <WrappedComponent pendingApiCall={pendingApiCall} {...this.props} />
+        <WrappedComponent {...this.props} pendingApiCall={pendingApiCall} />
       );
     }
   };

@@ -2,56 +2,84 @@ import React, { Component } from "react";
 import logo from "../assets/hoaxify.png";
 import { Link } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+//import { Authentication } from "../shared/AuthenticationContext";
+// import { connect } from "react-redux";
+// import { logoutSuccess } from "../redux/authActions";
 
-class TopBar extends Component {
-  state = {
-    isLoggedIn: true,
-    username: "user1",
-  };
-  render() {
-    const { t } = this.props;
-    const { isLoggedIn, username } = this.state;
+const TopBar = (props) => {
+  //static contextType = Authentication;
 
-    let links = (
+  //render() {
+  //console.log(this.props)
+  const { t, username, isLoggedIn, onLogoutSuccess } = props;
+  // const { state, onLogoutSuccess } = this.context;
+  // const { isLoggedIn, username } = state;
+  let links = (
+    <ul className="navbar-nav ms-auto">
+      <li>
+        <Link className="nav-link" to="login">
+          {t("Login")}
+        </Link>
+      </li>
+      <li>
+        <Link className="nav-link" to="signup">
+          {t("Sign Up")}
+        </Link>
+      </li>
+    </ul>
+  );
+
+  if (isLoggedIn) {
+    links = (
       <ul className="navbar-nav ms-auto">
         <li>
-          <Link className="nav-link" to="login">
-            {t("Login")}
+          <Link className="nav-link" to={`/user/${username}`}>
+            {username}
           </Link>
         </li>
-        <li>
-          <Link className="nav-link" to="signup">
-            {t("Sign Up")}
-          </Link>
+        <li
+          className="nav-link"
+          onClick={onLogoutSuccess}
+          style={{ cursor: "pointer" }}
+        >
+          {t("Logout")}
         </li>
       </ul>
     );
-
-    if (isLoggedIn) {
-      links = (
-        <ul className="navbar-nav ms-auto">
-          <li>
-            <Link className="nav-link" to={`/user/${username}`}>
-              {username}
-            </Link>
-          </li>
-          <li className="nav-link">{t("Logout")}</li>
-        </ul>
-      );
-    }
-
-    return (
-      <div className="shadow-sm bg-light mb-2">
-        <nav className="navbar navbar-light container navbar-expand">
-          <Link className="navbar-brand" to="/">
-            <img src={logo} width="60" alt="Hoaxify Logo" />
-            Hoaxify
-          </Link>
-          {links}
-        </nav>
-      </div>
-    );
   }
-}
 
-export default withTranslation()(TopBar);
+  return (
+    <div className="shadow-sm bg-light mb-2">
+      <nav className="navbar navbar-light container navbar-expand">
+        <Link className="navbar-brand" to="/">
+          <img src={logo} width="60" alt="Hoaxify Logo" />
+          Hoaxify
+        </Link>
+        {links}
+      </nav>
+    </div>
+  );
+  //}
+};
+
+const TopBarWithTranslation = withTranslation()(TopBar);
+
+// const mapStateToProps = (store) => {
+//   return {
+//     isLoggedIn: store.isLoggedIn,
+//     username: store.username,
+//   };
+// };
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     onLogoutSuccess: () => dispatch(logoutSuccess()),
+//   };
+// };
+
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(TopBarWithTranslation);
+
+export default TopBarWithTranslation;
