@@ -1,30 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import ButtonWithProgress from "../components/ButtonWithProgress";
-import { withApiProgress } from "../shared/ApiProgress";
-import { connect } from "react-redux";
+import { useApiProgress } from "../shared/ApiProgress";
+import { useDispatch } from "react-redux";
 import { loginHandler } from "../redux/authActions";
-//import { Authentication } from "../shared/AuthenticationContext";
 
 const LoginPage = (props) => {
-  //static contextType = Authentication;
-
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setError(undefined);
   }, [username, password]);
-
-  // const onChange = (event) => {
-  //   const { name, value } = event.target;
-  //   // this.setState({
-  //   //   [name]: value,
-  //   //   error: null,
-  //   // });
-  // };
 
   const onClickLogin = async (event) => {
     event.preventDefault();
@@ -33,25 +24,20 @@ const LoginPage = (props) => {
       password,
     };
 
-    const { history, dispatch } = props;
+    const { history } = props;
     const { push } = history;
 
-    // this.setState({
-    //   error: null,
-    // });
     setError(undefined);
     try {
       await dispatch(loginHandler(creds));
       push("/");
     } catch (apiError) {
       setError(apiError.response.data.message);
-      // this.setState({
-      //   error: apiError.response.data.message,
-      // });
     }
   };
 
-  const { t, pendingApiCall } = props;
+  const { t } = useTranslation();
+  const pendingApiCall = useApiProgress("/api/1.0/auth");
 
   const buttonEnabled = username && password;
 
@@ -82,8 +68,4 @@ const LoginPage = (props) => {
   );
 };
 
-const LoginPageWithTranslation = withTranslation()(LoginPage);
-
-export default connect()(
-  withApiProgress(LoginPageWithTranslation, "/api/1.0/auth")
-);
+export default LoginPage;
