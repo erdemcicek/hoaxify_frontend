@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ProfileImageWithDefault from "./ProfileImageWithDefault";
 import { useTranslation } from "react-i18next";
 import Input from "./Input";
 import { updateUser } from "../api/apiCalls";
 import { useApiProgress } from "../shared/ApiProgress";
 import ButtonWithProgress from "./ButtonWithProgress";
+import { updateSuccess } from "../redux/authActions";
 
 const ProfileCard = (props) => {
   const [inEditMode, setInEditMode] = useState(false);
@@ -20,6 +21,7 @@ const ProfileCard = (props) => {
   const [editable, setEditable] = useState(false);
   const [newImage, setNewImage] = useState();
   const [validationErrors, setValidationErrors] = useState({});
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setUser(props.user);
@@ -35,6 +37,13 @@ const ProfileCard = (props) => {
       displayName: undefined,
     }));
   }, [updatedDisplayName]);
+
+  useEffect(() => {
+    setValidationErrors((previousValidationErrors) => ({
+      ...previousValidationErrors,
+      image: undefined,
+    }));
+  }, [newImage]);
 
   //const { user } = props;
   const { username, displayName, image } = user;
@@ -63,6 +72,7 @@ const ProfileCard = (props) => {
       const response = await updateUser(username, body);
       setInEditMode(false);
       setUser(response.data);
+      dispatch(updateSuccess(response.data));
     } catch (error) {
       setValidationErrors(error.response.data.validationErrors);
     }
@@ -82,7 +92,7 @@ const ProfileCard = (props) => {
 
   const pendingApiCall = useApiProgress("put", "/api/1.0/users/" + username);
 
-  const { displayName: displayNameError } = validationErrors;
+  const { displayName: displayNameError, image: imageError } = validationErrors;
   return (
     <div className="card text-center">
       <div className="card-header">
@@ -122,7 +132,7 @@ const ProfileCard = (props) => {
               }}
               error={displayNameError}
             />
-            <input type="file" onChange={onChangeFile} />
+            <Input type="file" onChange={onChangeFile} error={imageError} />
             <div>
               <ButtonWithProgress
                 className="btn btn-primary d-inline-flex"
