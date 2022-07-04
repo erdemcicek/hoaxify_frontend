@@ -5,7 +5,11 @@ export const signUp = (body) => {
 };
 
 export const login = (creds) => {
-  return axios.post("/api/1.0/auth", {}, { auth: creds });
+  return axios.post("/api/1.0/auth", creds);
+};
+
+export const logout = () => {
+  return axios.post("/api/1.0/logout");
 };
 
 export const changeLanguage = (language) => {
@@ -16,9 +20,9 @@ export const getUsers = (page = 0, size = 3) => {
   return axios.get(`/api/1.0/users?page=${page}&size=${size}`);
 };
 
-export const setAuthorizationHeader = ({ username, password, isLoggedIn }) => {
+export const setAuthorizationHeader = ({ isLoggedIn, token }) => {
   if (isLoggedIn) {
-    const authorizationHeaderValue = `Basic ${btoa(username + ":" + password)}`;
+    const authorizationHeaderValue = `Bearer ${token}`;
     //const authorizationHeaderValue = `Basic ${buf.toString("base64")(
     //  username + ":" + password
     //)}`;
@@ -71,4 +75,12 @@ export const getNewHoaxes = (id, username) => {
 
 export const postHoaxAttachment = (attachment) => {
   return axios.post(`/api/1.0/hoax-attachments`, attachment);
+};
+
+export const deleteHoax = (id) => {
+  return axios.delete(`/api/1.0/hoaxes/${id}`);
+};
+
+export const deleteUser = (username) => {
+  return axios.delete(`/api/1.0/users/${username}`);
 };
